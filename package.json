@@ -23,6 +23,8 @@
     "mongoose": "^6.4.2",
     "nodemon": "^2.0.18",
     "passport-local": "^1.0.0",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "swagger-jsdoc": "^6.2.1",
+    "swagger-ui-express": "^4.4.0"
   }
 }

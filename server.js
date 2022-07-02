@@ -5,11 +5,39 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
 const {signin,signup} = require('./controllers/auth');
+
+
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+
 env.config();
 
 const app = express();
 
-let url = `mongodb+srv://${process.env.USER_NAME}:${process.env.PASSWORD}@cluster0.hfzng.mongodb.net/${process.env.DATABASE}?retryWrites=true&w=majority`;
+const swaggerOptions = {
+    swaggerDefinition : {
+
+        info : {
+            title : 'User API',
+            description : "User API information",
+            contact : {
+                name : "web developer"
+
+            },
+            servers:['http://localhost:5000']
+        }
+    },
+
+    apis : ['server.js']
+};
+
+const swaggerDocs = swaggerJsdoc(swaggerOptions);
+
+app.use('/api-docs',swaggerUi.serve,swaggerUi.setup(swaggerDocs));
+
+
+
+let url = 'mongodb://localhost:27017/Node_Web_Users';
 
 app.use(cors());
 
@@ -17,6 +45,53 @@ app.use(bodyParser.urlencoded({extended:true}));
 
 app.set('views',path.join(__dirname,'views'));
 app.set('view engine','ejs');
+
+/**
+ * @swagger
+ * /:
+ *  
+ *  get:
+ *      summary : renders the homepage
+ *      description : rendering home page
+ *      responses : 
+ *          '200' : 
+ *              description : A successful response
+ */
+
+/**
+ * @swagger
+ * /signup:
+ *  
+ *  get:
+ *      summary : getting the user registration page
+ *      description : rendering home page
+ *      responses : 
+ *          '200' : 
+ *              description : A successful response
+ *  post:
+ *      summary : posting the user details for registering
+ *      description : posting the user details
+ *      responses :
+ *           '201' : 
+ *               description : User registration is successful
+ */
+/**
+ * @swagger
+ * /signin:
+ *  
+ *  get:
+ *      summary : getting the user login page
+ *      description : rendering home page
+ *      responses : 
+ *          '200' : 
+ *              description : A successful response
+ *  post:
+ *      summary : user can login by posting correct credentials
+ *      description : posting the user details
+ *      responses :
+ *           '201' : 
+ *               description : User registration is successful
+ */
 
 app.get('/',(req,res) => {
 
