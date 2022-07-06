@@ -9,6 +9,7 @@ const {signin,signup} = require('./controllers/auth');
 
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
+const { getTasks, addTask, updateTask, deleteTask } = require('./controllers/task');
 
 env.config();
 
@@ -24,7 +25,7 @@ const swaggerOptions = {
                 name : "web developer"
 
             },
-            servers:['http://localhost:5000']
+            servers:['https://nodejs-web-application.herokuapp.com']
         }
     },
 
@@ -37,7 +38,7 @@ app.use('/api-docs',swaggerUi.serve,swaggerUi.setup(swaggerDocs));
 
 
 
-let url = 'mongodb://localhost:27017/Node_Web_Users';
+let url = `mongodb+srv://${process.env.USER_NAME}:${process.env.PASSWORD}@cluster0.hfzng.mongodb.net/${process.env.DATABASE}?retryWrites=true&w=majority`;
 
 app.use(cors());
 
@@ -93,6 +94,78 @@ app.set('view engine','ejs');
  *               description : User registration is successful
  */
 
+/**
+ * @swagger
+ * /task:
+ *  
+ *  get:
+ *      summary : renders the taskpage
+ *      description : task page contains buttons for adding task and viewing task
+ *      responses : 
+ *          '200' : 
+ *              description : A successful response
+ */
+
+/**
+ * @swagger
+ * /tasks:
+ *  
+ *  get:
+ *      summary : renders the tasks page
+ *      description : task page views all the tasks
+ *      responses : 
+ *          '200' : 
+ *              description : A successful response
+ * 
+ *  
+ */
+
+/**
+ * @swagger
+ * /addTask:
+ *  
+ *  get:
+ *      summary : renders the add task page
+ *      description : This page contains the form to add the task
+ *      responses : 
+ *          '200' : 
+ *              description : A successful response
+ * 
+ *  post:
+ *      summary : user submits the task details
+ *      description : posting the new task 
+ *      responses :
+ *           '201' : 
+ *               description : Adding the task is successful
+ */
+
+
+/**
+ * @swagger
+ * /editTask/:id:
+ *  
+ *  post:
+ *      summary : edits the task
+ *      description : edited task is reflected in the database
+ *      responses : 
+ *          '200' : 
+ *              description : Task edited successfully
+ */
+
+/**
+ * @swagger
+ * /deleteTask/:id:
+ *  
+ *  get:
+ *      summary : deletes the task
+ *      description : deleted task is reflected in the database
+ *      responses : 
+ *          '200' : 
+ *              description : Task deleted successfully
+ */
+
+
+
 app.get('/',(req,res) => {
 
     res.render('home')
@@ -106,12 +179,49 @@ app.get('/signin',(req,res) => {
     res.render('login')
 })
 
+app.get('/task',(req,res) => {
+    res.render('task')
+})
+
+app.get('/tasks',async(req,res) => {
+    let {tasks} = await getTasks();
+
+    res.render('viewTasks',{tasks})
+})
+
+app.get('/addtask',async(req,res) => {
+    
+    res.render('addTask')
+});
+
+app.get('/deleteTask/:id',async(req,res) => {
+
+    let {message} = await deleteTask(req,res);
+    res.render('status',{message})
+
+})
+
+app.post('/addTask',async(req,res) => {
+    let {message} = await addTask(req,res);
+
+    res.render('status',{message})
+})
+
+app.post('/editTask/:id',async(req,res) => {
+    
+    let {message} = await updateTask(req,res);
+
+    res.render('status',{message})
+})
+
 app.post('/signup',async(req,res) => {
     let {message} = await signup(req,res);
 
     
     res.render('status',{message})
 });
+
+
 
 app.post('/signin',async(req,res) => {
     let message = await signin(req,res);

@@ -1,0 +1,29 @@
+
+<!DOCTYPE html> 
+
+<html>
+
+
+    <head>
+       View Task Page
+    </head>
+    
+    <body>
+
+       
+        <% for(const task of tasks) { %>
+      <form method="post" action="/editTask/<%= task._id %>" >
+
+        <h3><%= task.task %></h3>
+        <input  name="task" label='Edit the task here' />
+        <button type="submit"  >Edit Task</button>
+        <br/>
+        <br/>
+        </form>
+        
+        <form  action="/deleteTask/<%= task._id %>" >
+          <button type = 'submit'  >Delete Task</button>
+         </form>
+       <% } %>
+    </body>
+</html>
